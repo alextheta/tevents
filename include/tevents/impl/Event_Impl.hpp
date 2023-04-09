@@ -21,7 +21,7 @@ namespace te
     {
         auto key = MakeKey(instance, callback);
         auto packedCallback = std::function(
-                [&instance, callback](Args &&...args)
+                [instance, callback](Args &&...args)
                 {
                     (instance->*callback)(args...);
                 });
