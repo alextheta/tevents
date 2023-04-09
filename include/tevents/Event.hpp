@@ -19,6 +19,7 @@ namespace te
         template<typename T> void Unsubscribe(T *instance, void(T::*callback)(Args...));
         template<typename T> void Unsubscribe(T &instance, void(T::*callback)(Args...));
 
+        void operator()(Args... args) const;
         void Invoke(Args... args) const;
 
     private:

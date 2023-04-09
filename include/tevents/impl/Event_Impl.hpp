@@ -59,6 +59,12 @@ namespace te
     }
 
     template<typename... Args>
+    void Event<Args...>::operator()(Args... args) const
+    {
+        Invoke(args...);
+    }
+
+    template<typename... Args>
     void Event<Args...>::Invoke(Args... args) const
     {
         for (auto callbackPair: _callbacks)
