@@ -22,6 +22,8 @@ namespace te
         void operator()(Args... args) const;
         void Invoke(Args... args) const;
 
+        void Clear();
+
     private:
         EventKeyWrapper MakeKey(void(*callback)(Args...));
         template<typename T> EventKeyWrapper MakeKey(T *instance, void(T::*callback)(Args...));

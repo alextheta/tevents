@@ -74,6 +74,12 @@ namespace te
     }
 
     template<typename... Args>
+    void Event<Args...>::Clear()
+    {
+        _callbacks.clear();
+    }
+
+    template<typename... Args>
     EventKeyWrapper Event<Args...>::MakeKey(void(*callback)(Args...))
     {
         auto callbackSize = sizeof(&callback);
