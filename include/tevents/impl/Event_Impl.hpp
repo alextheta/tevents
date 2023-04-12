@@ -21,7 +21,7 @@ namespace te
     {
         auto key = MakeKey(instance, callback);
         auto packedCallback = std::function(
-                [&instance, callback](Args &&...args)
+                [instance, callback](Args &&...args)
                 {
                     (instance->*callback)(args...);
                 });
@@ -59,12 +59,24 @@ namespace te
     }
 
     template<typename... Args>
+    void Event<Args...>::operator()(Args... args) const
+    {
+        Invoke(args...);
+    }
+
+    template<typename... Args>
     void Event<Args...>::Invoke(Args... args) const
     {
         for (auto callbackPair: _callbacks)
         {
             callbackPair.second(args...);
         }
+    }
+
+    template<typename... Args>
+    void Event<Args...>::Clear()
+    {
+        _callbacks.clear();
     }
 
     template<typename... Args>

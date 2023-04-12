@@ -19,7 +19,10 @@ namespace te
         template<typename T> void Unsubscribe(T *instance, void(T::*callback)(Args...));
         template<typename T> void Unsubscribe(T &instance, void(T::*callback)(Args...));
 
+        void operator()(Args... args) const;
         void Invoke(Args... args) const;
+
+        void Clear();
 
     private:
         EventKeyWrapper MakeKey(void(*callback)(Args...));
