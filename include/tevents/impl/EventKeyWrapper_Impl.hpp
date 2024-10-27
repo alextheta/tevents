@@ -1,29 +1,34 @@
 #pragma once
 
-#include <string>
 #include <tevents/EventKeyWrapper.hpp>
 
 namespace te
 {
-    inline EventKeyWrapper::EventKeyWrapper(void *objectPtr, std::shared_ptr<uint8_t[]> callbackPtr, size_t callbackSize) :
-            _objectPtr(objectPtr),
-            _callbackPtr(callbackPtr),
-            _callbackSize(callbackSize)
+    inline EventKeyWrapper::EventKeyWrapper(const void* objectPtr, std::shared_ptr<uint8_t[]> callbackPtr,
+                                            const size_t callbackSize) : _objectPtr(objectPtr),
+                                                                         _callbackPtr(std::move(callbackPtr)),
+                                                                         _callbackSize(callbackSize)
     {
     }
 
-    inline bool EventKeyWrapper::operator==(const EventKeyWrapper &other) const
+
+    inline auto EventKeyWrapper::operator==(const EventKeyWrapper& other) const -> bool
     {
-        return other._objectPtr == _objectPtr &&
-               other._callbackSize == _callbackSize &&
-               std::memcmp(other._callbackPtr.get(), _callbackPtr.get(), _callbackSize) == 0;
+        return _objectPtr == other._objectPtr &&
+               _callbackSize == other._callbackSize &&
+               std::memcmp(_callbackPtr.get(), other._callbackPtr.get(), _callbackSize) == 0;
     }
 
-    inline size_t EventKeyWrapper::Hash::operator()(const EventKeyWrapper &eventKeyWrapper) const
+    inline auto EventKeyWrapper::Hash::operator()(const EventKeyWrapper& eventKeyWrapper) const -> size_t
     {
-        std::string s((char *) eventKeyWrapper._callbackPtr.get(), eventKeyWrapper._callbackSize);
-        auto h1 = std::hash<std::string>{}(s);
-        auto h2 = std::hash<void *>{}(eventKeyWrapper._objectPtr);
-        return h1 ^ (h2 << 1);
+        size_t callbackHash = 0;
+        const auto* const callbackPtr = static_cast<const unsigned char *>(eventKeyWrapper._callbackPtr.get());
+        for (size_t i = 0; i < eventKeyWrapper._callbackSize; i++)
+        {
+            callbackHash ^= static_cast<size_t>(callbackPtr[i]) << i % sizeof(size_t);
+        }
+
+        const auto instanceHash = std::hash<const void *>{}(eventKeyWrapper._objectPtr);
+        return callbackHash ^ instanceHash << 1;
     }
 }
