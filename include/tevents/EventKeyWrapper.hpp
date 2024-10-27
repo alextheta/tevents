@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 namespace te
 {
     class EventKeyWrapper
@@ -9,16 +7,16 @@ namespace te
     public:
         struct Hash
         {
-            size_t operator()(const EventKeyWrapper &eventKeyWrapper) const;
+            auto operator()(const EventKeyWrapper& eventKeyWrapper) const -> size_t;
         };
 
         EventKeyWrapper() = delete;
-        EventKeyWrapper(void *objectPtr, std::shared_ptr<uint8_t[]> callbackPtr, size_t callbackSize);
+        EventKeyWrapper(const void* objectPtr, std::shared_ptr<uint8_t[]> callbackPtr, size_t callbackSize);
 
-        bool operator==(const EventKeyWrapper &other) const;
+        auto operator==(const EventKeyWrapper& other) const -> bool;
 
     private:
-        void *_objectPtr;
+        const void* _objectPtr;
         std::shared_ptr<uint8_t[]> _callbackPtr;
         size_t _callbackSize;
     };
